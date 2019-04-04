@@ -1,0 +1,15 @@
+"C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.0\arm\bin\armproc.dll" 
+
+"C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.0\arm\bin\armJET.dll" 
+
+"C:\Users\wyc\Desktop\开发项目集\（3）动态GPIO配置\Smart_Plug_RTK\Smart_Plug_RTK\project\realtek_amebaz_va0_example\EWARM-RELEASE\Debug\Exe\application.axf" 
+
+--plugin "C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.0\arm\bin\armbat.dll" 
+
+--macro "C:\Users\wyc\Desktop\开发项目集\（3）动态GPIO配置\Smart_Plug_RTK\Smart_Plug_RTK\project\realtek_amebaz_va0_example\EWARM-RELEASE\..\..\..\component\soc\realtek\8711b\misc\iar_utility\common\preload.mac" 
+
+--flash_loader "C:\Users\wyc\Desktop\开发项目集\（3）动态GPIO配置\Smart_Plug_RTK\Smart_Plug_RTK\project\realtek_amebaz_va0_example\EWARM-RELEASE\tmp.board" 
+
+
+
+
