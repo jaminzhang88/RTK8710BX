@@ -28,7 +28,7 @@
 #define BUILD_PROGNAME    "smartplug"
 #define BUILD_VERSION         "ASW-01"  //模组名称
 #define BUILD_STRING	          BUILD_VERSION " "  "V001-01" " " __DATE__ " " __TIME__  //V001 是模版版本号  01是固件版本号
-
+   
 /* 
  * The oem and oem_model strings determine the host name for the
  * Ayla device service and the device template on the service.
