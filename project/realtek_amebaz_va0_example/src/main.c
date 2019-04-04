@@ -28,7 +28,7 @@ printf("\n\n--------MAIN  IN AILIAN PRODUCE  MODE-------------\n\n");
 	/* pre-processor of application example */
     //pre_example_entry(); 
 
-	/* wlan intialization */
+	/* wlan intialization */ 
 #if defined(CONFIG_WIFI_NORMAL) && defined(CONFIG_NETWORK)
 	  wlan_network();
       Led_Indicate();
