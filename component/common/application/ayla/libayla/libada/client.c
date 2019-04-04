@@ -249,9 +249,7 @@ static const struct hostname_info server_region_table[] = {
 	//{ "CN", "ayla.com.cn" },//°¬À­ÖÐ¹ú
 };
 /* First hostname table entry is the default */
-static const struct hostname_info *SERVER_HOSTINFO_DEFAULT =
-	server_region_table;
-
+static const struct hostname_info *SERVER_HOSTINFO_DEFAULT =server_region_table;
 /*
  * Register for callback when ADS reachability changes, or a new
  * connection attempt fails.

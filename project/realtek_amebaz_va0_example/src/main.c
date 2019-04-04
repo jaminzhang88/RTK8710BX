@@ -33,7 +33,7 @@ printf("\n\n--------MAIN  IN AILIAN PRODUCE  MODE-------------\n\n");
 	  wlan_network();
       Led_Indicate();
       KEY_Indicate(); 
-      //printf_flag_all();
+
 #endif
 
 	/* Execute application example */

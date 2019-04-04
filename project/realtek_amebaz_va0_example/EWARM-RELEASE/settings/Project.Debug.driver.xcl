@@ -6,7 +6,7 @@
 
 "-p" 
 
-"C:\Users\wyc\Desktop\开发项目集\（3）动态GPIO配置\Smart_Plug_RTK\Smart_Plug_RTK\project\realtek_amebaz_va0_example\EWARM-RELEASE\..\..\..\component\soc\realtek\8711b\misc\iar_utility\common\8710b.ddf" 
+"C:\Users\wyc\Desktop\开发项目集\（8）Realtek8710BX\RTL8710BX\RTK8710BX\project\realtek_amebaz_va0_example\EWARM-RELEASE\..\..\..\component\soc\realtek\8711b\misc\iar_utility\common\8710b.ddf" 
 
 "--semihosting=none" 
 

@@ -23,9 +23,9 @@
 
 if ($debugfile -eq "")
 {
-& "C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.0\common\bin\cspybat" -f "C:\Users\wyc\Desktop\开发项目集\（3）动态GPIO配置\Smart_Plug_RTK\Smart_Plug_RTK\project\realtek_amebaz_va0_example\EWARM-RELEASE\settings\Project.Debug.general.xcl" --backend -f "C:\Users\wyc\Desktop\开发项目集\（3）动态GPIO配置\Smart_Plug_RTK\Smart_Plug_RTK\project\realtek_amebaz_va0_example\EWARM-RELEASE\settings\Project.Debug.driver.xcl" 
+& "C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.0\common\bin\cspybat" -f "C:\Users\wyc\Desktop\开发项目集\（8）Realtek8710BX\RTL8710BX\RTK8710BX\project\realtek_amebaz_va0_example\EWARM-RELEASE\settings\Project.Debug.general.xcl" --backend -f "C:\Users\wyc\Desktop\开发项目集\（8）Realtek8710BX\RTL8710BX\RTK8710BX\project\realtek_amebaz_va0_example\EWARM-RELEASE\settings\Project.Debug.driver.xcl" 
 }
 else
 {
-& "C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.0\common\bin\cspybat" -f "C:\Users\wyc\Desktop\开发项目集\（3）动态GPIO配置\Smart_Plug_RTK\Smart_Plug_RTK\project\realtek_amebaz_va0_example\EWARM-RELEASE\settings\Project.Debug.general.xcl" --debug_file=$debugfile --backend -f "C:\Users\wyc\Desktop\开发项目集\（3）动态GPIO配置\Smart_Plug_RTK\Smart_Plug_RTK\project\realtek_amebaz_va0_example\EWARM-RELEASE\settings\Project.Debug.driver.xcl" 
+& "C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.0\common\bin\cspybat" -f "C:\Users\wyc\Desktop\开发项目集\（8）Realtek8710BX\RTL8710BX\RTK8710BX\project\realtek_amebaz_va0_example\EWARM-RELEASE\settings\Project.Debug.general.xcl" --debug_file=$debugfile --backend -f "C:\Users\wyc\Desktop\开发项目集\（8）Realtek8710BX\RTL8710BX\RTK8710BX\project\realtek_amebaz_va0_example\EWARM-RELEASE\settings\Project.Debug.driver.xcl" 
 }
