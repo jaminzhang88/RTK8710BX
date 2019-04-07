@@ -97,7 +97,7 @@ void Production_measurement(void);
 /* 定义 Key/STATE_LED/SW_LED/OPT_IO PIN */
 uint32_t PIN_DYNAMIC_KEY=PA_12;//默认值
 uint32_t PIN_DYNAMIC_OPT=PA_15;
-uint32_t PIN_DYNAMIC_STATE_LED=PA_22;
+uint32_t PIN_DYNAMIC_STATE_LED=PA_22; 
 uint32_t PIN_DYNAMIC_SW_LED=PA_22;
 
 #define KEY_PIN_SET		      PIN_DYNAMIC_KEY    //设置按键
@@ -209,7 +209,7 @@ void led_thread(void *param)
         // init_led_key(); 
         for(;;){ 
                 vTaskDelay(130);
-                if(flag_airkiss_mode==1&&flag_work_mode==0&&flag_ap_mode==0&&flag_connect_fail==0) { LED_SINGLE_Fast();}		   
+                if(flag_airkiss_mode==1&&flag_work_mode==0&&flag_ap_mode==0&&flag_connect_fail==0) {LED_SINGLE_Fast();}		   
     	        if(flag_ap_mode==1&&flag_airkiss_mode==0&&flag_work_mode==0&&flag_connect_fail==0) {LED_SINGLE_Slow(); }
                 if(flag_work_mode==1&&flag_ap_mode==0&&flag_airkiss_mode==0){LED_SINGLE_LightOff();}
 
@@ -320,7 +320,7 @@ static unsigned char key_driver(void){
 				    key_state_buffer1 = key_state_3;  //转换到等待按键释放状态
 				}
 			}
-		     break;
+		     break; 
 		  case key_state_3:  //等待按键释放
 		    if(key == 1){  //按键释放
 			  key_state_buffer1 = key_state_0;  //切回按键初始状态
