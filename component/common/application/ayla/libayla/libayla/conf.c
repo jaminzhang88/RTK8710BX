@@ -2799,7 +2799,6 @@ static int atoi_io(char s[])
     return n;  
 } 
 
-extern void Production_measurement(void);
 extern uint32_t PIN_DYNAMIC_KEY;
 extern uint32_t PIN_DYNAMIC_OPT;
 extern uint32_t PIN_DYNAMIC_STATE_LED;
@@ -2820,10 +2819,11 @@ void io_init(int io_num,int mode){
     GPIO_InitTypeDef  GPIO_InitStruct;
 	u32 GPIO_PuPd; 
     switch(io_num){
-		        case 0: pin = PA_0; break; case 1: pin = PA_1; break; case 2: pin = PA_2; break; case 3: pin = PA_3; break;
-		        case 4: pin = PA_4; break; case 5: pin = PA_5; break; case 6: pin = PA_6; break; case 7: pin = PA_7; break;
-                case 12: pin = PA_12; break; 
+		        case 5: pin = PA_5; break; 
+		        case 12: pin = PA_12; break; 
+		        case 14: pin = PA_14; break; 
                 case 15: pin = PA_15; break; 
+                case 19: pin = PA_19; break; 
                 case 22: pin = PA_22; break; 
 	        }
             if(pin == NC){

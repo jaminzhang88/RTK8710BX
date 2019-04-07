@@ -181,11 +181,11 @@ static void ada_sprop_mgr_send_done(enum prop_cb_status status,
 	u8 fail_mask, void *cb_arg)
 {
 
-        flag_work_mode=1;
-        flag_ap_mode=0;
-        flag_airkiss_mode=0;
-        flag_connect_fail=0;
-        flag_device_down=0;
+    flag_work_mode=1;
+    flag_ap_mode=0;
+    flag_airkiss_mode=0;
+    flag_connect_fail=0;
+    flag_device_down=0;
 	struct prop *prop = cb_arg;
 	struct ada_sprop *sprop;
 	u8 dests = ada_sprop_dest_mask;

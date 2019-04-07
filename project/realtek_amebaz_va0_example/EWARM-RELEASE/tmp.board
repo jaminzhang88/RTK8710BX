@@ -13,10 +13,10 @@
     <abs_offset>0xb020</abs_offset>  
   </pass> 
   <pass>    
-    <range>CODE 0x10005000 0x1000C1BB</range>    
+    <range>CODE 0x10005000 0x100070CF</range>    
     <loader>$PROJ_DIR$\..\..\..\component\soc\realtek\8711b\misc\iar_utility\common\flashloader\FlashRTL8195aMP.flash</loader>      
     <abs_offset>0xb000</abs_offset>    
     <args>--concat</args>    
   </pass>    
-  <ignore>CODE 0x1000c1bc 0x1003dfff</ignore> 
+  <ignore>CODE 0x100070d0 0x1003dfff</ignore> 
 </flash_board> 

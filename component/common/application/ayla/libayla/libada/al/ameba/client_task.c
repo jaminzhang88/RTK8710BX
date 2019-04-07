@@ -305,6 +305,6 @@ int ada_init(void)
 	    NULL, CLIENT_TASK_PRIO, NULL) != pdPASS) {
 		AYLA_ASSERT_NOTREACHED();
 	}
-	client_mdns_init();
+	//client_mdns_init();
 	return 0;
 }

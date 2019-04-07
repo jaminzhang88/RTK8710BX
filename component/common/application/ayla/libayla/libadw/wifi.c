@@ -47,7 +47,7 @@ static u8 adw_aks_send_fin;
 static char ssid_hostname[33];
 const char * const adw_wifi_errors[] = WIFI_ERRORS;
 
-struct adw_state adw_state;
+struct adw_state adw_state={.setup_mode=1};
 ADW_SIZE_INIT				/* for ADW_SIZE_DEBUG */
 
 static struct net_callback adw_wifi_cbmsg_join;
@@ -1262,11 +1262,11 @@ int adw_wifi_start_aks_ext(void *arg)
 extern int flag_work_mode,flag_ap_mode,flag_airkiss_mode,flag_device_down;
 static void adw_wifi_start_ap(struct adw_state *wifi)
 {          
-         flag_work_mode=0;
-         flag_ap_mode=1;
-         flag_airkiss_mode=0;
-         flag_device_down=0;
-         struct netif *ifnet;
+    flag_work_mode=0;
+    flag_ap_mode=1;
+    flag_airkiss_mode=0;
+    flag_device_down=0;
+    struct netif *ifnet;
 	struct adw_profile *prof = &wifi->profile[ADW_WIFI_PROF_AP];
 	int chan = WIFI_AP_MODE_CHAN;
 	int rc;
@@ -1432,7 +1432,7 @@ int adw_wifi_wpa_password_convert(const u8 *pwd, size_t pwd_len, u8 *key)
 	}
 	return -1;
 }
-
+extern int flag_produce_mode;
 static void adw_wifi_scan_report(struct adw_state *wifi)
 {
 	struct adw_scan *scan;
@@ -1442,6 +1442,12 @@ static void adw_wifi_scan_report(struct adw_state *wifi)
 		if (scan->rssi != WIFI_MIN_SIG) {
 			results++;
 		}
+	    printf("ssid scan is:%s\n",scan->ssid.id);
+	    if(scan->ssid.id[0]=='s'&&scan->ssid.id[1]=='a'&&scan->ssid.id[2]=='-'&&scan->ssid.id[3]=='p'&&scan->ssid.id[12]=='1')   //更改ssid特定名称
+        {
+          printf("\n\n\n---------produce mode start---------\n\n\n\n");
+          flag_produce_mode=1;
+        }
 	}
 	adw_log(LOG_DEBUG "scan done. %d networks found", results);
 }
@@ -1450,7 +1456,7 @@ static void adw_wifi_scan_report(struct adw_state *wifi)
  * Start join process to associate with the given profile. Returns 0
  * if process is underway.
  */
-extern int flag_fixed_ssid, flag_fixed_ssid_fail, flag_connect_fail;//产测连接失败;
+extern int flag_connect_fail;//产测连接失败;
 static int adw_wifi_join_profile(struct adw_state *wifi,
 				struct adw_profile *prof)
 {
@@ -1478,15 +1484,8 @@ static int adw_wifi_join_profile(struct adw_state *wifi,
 	    adw_format_ssid(&prof->ssid, ssid_buf, sizeof(ssid_buf)),
 	    conf_string(adw_wmi_sec_import(scan->wmi_sec)),
 	    scan->rssi);
-         //sa-produce-01
-        if(ssid_buf[0]=='s'&&ssid_buf[1]=='a'&&ssid_buf[2]=='-'&&ssid_buf[3]=='p'&&ssid_buf[12]=='1')   //更改ssid特定名称
-        {
-          printf("\n\n\n---------produce mode start---------\n\n\n\n");
-          flag_fixed_ssid=1;
-        }
-	adw_wmi_powersave_set(ADW_WIFI_PS_OFF);
-
-	wifi_error = adw_wmi_join(wifi, prof);
+    adw_wmi_powersave_set(ADW_WIFI_PS_OFF);
+    wifi_error = adw_wmi_join(wifi, prof);
 	if (wifi_error != WIFI_ERR_NONE) {
 		hist->error = wifi_error;
 	} else {
@@ -1511,16 +1510,7 @@ static int adw_wifi_join_profile(struct adw_state *wifi,
 		adw_log(LOG_WARN "Wi-Fi connect to %s failed - error %d",
 		    ssid_buf, wifi_error);
 		 flag_connect_fail=1;//之前已经配上过网，但是网现在不在情况下
-    	         if(ssid_buf[0]=='s'&&ssid_buf[1]=='a'&&ssid_buf[2]=='-'&&ssid_buf[3]=='p'&&ssid_buf[12]=='1') //更改ssid特定名称
-                {
-                    flag_fixed_ssid_fail=1;  //产测连接失败
-                    printf("\n\n\n------flag_fixed_ssid_fail=1--------\n\n");
-                }else
-                {
-                    flag_fixed_ssid_fail=0;  
-                }
-                     
-		break;
+    	 break;
 	}
 	prof->join_errs++;
 	adw_wifi_current_profile_done(wifi, hist);

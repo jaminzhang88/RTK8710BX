@@ -10,7 +10,7 @@
  * App.  E.g., the LED property is Blue_LED even though the color is yellow.
  * Button1 sends the Blue_button property, even though the button is white.
  */
-#define HAVE_UTYPES
+#define  HAVE_UTYPES
 #include "lwip/ip_addr.h"
 
 #include <ayla/utypes.h>
@@ -72,11 +72,10 @@ static enum ada_err demo_led_set(struct ada_sprop *, const void *, size_t);
 static enum ada_err demo_int_set(struct ada_sprop *, const void *, size_t);
 static enum ada_err demo_cmd_set(struct ada_sprop *, const void *, size_t);
 void prop_send_by_name(const char *name);
-//产测模式相关定义
-void Production_measurement(void);
 
-
-
+//串口线程相关定义
+#define STACKSIZE_UART                                     1024     //串口线程任务栈大小
+#define STACKSIZE_UART_CLEARRECV                           256      //清除中断接收flag
 
 //智能插座相关定义
 #define STACKSIZE_LED                                      512      //指示灯任务栈大小
@@ -97,7 +96,7 @@ void Production_measurement(void);
 /* 定义 Key/STATE_LED/SW_LED/OPT_IO PIN */
 uint32_t PIN_DYNAMIC_KEY=PA_12;//默认值
 uint32_t PIN_DYNAMIC_OPT=PA_15;
-uint32_t PIN_DYNAMIC_STATE_LED=PA_22;
+uint32_t PIN_DYNAMIC_STATE_LED=PA_22; 
 uint32_t PIN_DYNAMIC_SW_LED=PA_22;
 
 #define KEY_PIN_SET		      PIN_DYNAMIC_KEY    //设置按键
@@ -111,9 +110,6 @@ uint32_t PIN_DYNAMIC_SW_LED=PA_22;
 #define KEY1_READ			  GPIO_ReadDataBit(KEY_PIN_SET)
 /*读取继电器IO值*/
 #define OPT_READ              GPIO_ReadDataBit(OPT_PIN)
- 
-int time_bl=1000;                                //产测指示灯闪烁时间间隔
-
 
 //定义三个flag  工作模式、airkiss模式、ap模式，初始化为airkiss模式
 int flag_work_mode=0;
@@ -128,18 +124,44 @@ int flag_register_ok=0;
 int flag_device_down=0;
 
 //定义产测模式进入标志位
-int flag_fixed_ssid=0;   //产测模式固定ssid编号
 int flag_join_success=0;
 int flag_produce_mode=0;
-int flag_fixed_ssid_fail=0;
 
 
-//定义高低电平驱动
+//定义动态GPIO高低电平驱动
 int flag_state_led=0;
 int flag_sw_led=0;
 int flag_relay=0;
 int flag_button=0;
 
+int time_bl=1000;  //产测定义闪烁时间
+
+//////////////////////UART ADD////////////////////////////
+#include "device.h"
+#include "serial_api.h"
+
+typedef struct{
+	uint16_t	TxLeng;			
+	u8_t    	TxIndex;		
+	u8_t  	    TxBuff[100];	
+
+	u8_t  	    RxDealStep;		
+	u8_t  	    RxDataFlag;		
+	uint16_t	RxLeng;			
+	u8_t  	    RxCnt;			
+	u8_t  	    RxIndex;		
+	u8_t  	    RxOverFlag;		
+	u8_t  	    RxTimeOutCnt;
+	u8_t  	    RxBuff[100];	
+	u8_t  	    RxDataSucFlag;		
+}T_SENSOR_UART;
+T_SENSOR_UART SENSOR_UART;
+#define UART_TX      PA_23
+#define UART_RX      PA_18
+
+extern serial_t    sobj;
+unsigned char rc=0;
+/////////////////////////////////END UART ADD////////////////////////////////////////////////////////
 static struct ada_sprop demo_props[] = {
 	/*
 	 * version properties
@@ -173,7 +195,6 @@ void demo_init(void)
     conf_cli(2, argv4);
     vTaskDelay(200);
 	ada_sprop_mgr_register("SN0-01-0-001", demo_props, ARRAY_LEN(demo_props));
-	//ada_sprop_mgr_register("smartplug-dev", demo_props, ARRAY_LEN(demo_props));
 }
 
 //单色指示灯快闪
@@ -209,33 +230,12 @@ void led_thread(void *param)
         // init_led_key(); 
         for(;;){ 
                 vTaskDelay(130);
-                if(flag_airkiss_mode==1&&flag_work_mode==0&&flag_ap_mode==0&&flag_connect_fail==0) { LED_SINGLE_Fast();}		   
+                if(flag_airkiss_mode==1&&flag_work_mode==0&&flag_ap_mode==0&&flag_connect_fail==0) {LED_SINGLE_Fast();}		   
     	        if(flag_ap_mode==1&&flag_airkiss_mode==0&&flag_work_mode==0&&flag_connect_fail==0) {LED_SINGLE_Slow(); }
-                if(flag_work_mode==1&&flag_ap_mode==0&&flag_airkiss_mode==0){LED_SINGLE_LightOff();}
-
-                if(flag_connect_fail==1&&flag_fixed_ssid_fail==0){LED_SINGLE_LightOff(); }//客户正常使用中
-                if(flag_connect_fail==1&&flag_fixed_ssid_fail==1){//只针对第一次出厂时
-                   char *argv[] = { "wifi", "aks_save" };
-                   char *argv2[] = { "conf", "save" };
-                   char *argv3[] = { "reset" };
-                   adw_wifi_profile_sta_erase();
-                   vTaskDelay(500);
-                   adw_wifi_cli(2, argv);
-                   vTaskDelay(500);
-                   conf_cli(2, argv2);
-                   vTaskDelay(500);
-                   demo_reset_cmd(1, argv3);
-                }//工厂特定wifi不存在进入默认airkiss指示灯模式
-         
- 
-                //产测模式进入
-                if(flag_join_success==1&&flag_fixed_ssid==1&&flag_fixed_ssid_fail==0){
-                   flag_produce_mode=1;
-                }else{
-                   flag_produce_mode=0;
-                }
-
-               if(flag_produce_mode){ //产测模式路由器交替闪烁指示灯
+                if((flag_work_mode==1&&flag_ap_mode==0&&flag_airkiss_mode==0)||(flag_connect_fail==1)){LED_SINGLE_LightOff();}
+                
+                
+                if(flag_produce_mode){ //产测模式路由器交替闪烁指示灯
                          GPIO_WriteBit(STATE_LED, 1);
                          GPIO_WriteBit(OPT_PIN, 1);
 	                     vTaskDelay(time_bl);
@@ -243,6 +243,7 @@ void led_thread(void *param)
                          GPIO_WriteBit(OPT_PIN, 0);
 	                     vTaskDelay(time_bl);
 	           }
+	         
           }//end for
         vTaskDelete(NULL);
 }
@@ -253,27 +254,6 @@ void Led_Indicate()
 		printf("\n\r%s xTaskCreate(Led_Indicate) failed", __FUNCTION__);  
 }
 
-/**写入产测模式默认wifi***/
-void Production_measurement(void)
-{
-      char *argv4[]={"wifi","profile","0"};
-      adw_wifi_cli(3, argv4);
-      printf("\n\n----wifi profile 0----\n\n");
-      char *argv5[]={"wifi","ssid","sa-produce-01"};
-      adw_wifi_cli(3, argv5);
-      printf("\n\n----wifi ssid sa-produce-01----\n\n");
-      char *argv6[]={"wifi","security","WPA2_Personal"};
-      adw_wifi_cli(3, argv6);       
-      printf("\n\n----wifi security WPA2_Personal-----\n\n");
-      char *argv7[]={"wifi","key","123456789"};
-      adw_wifi_cli(3, argv7);
-      printf("\n\n----wifi key 123456789----\n\n");    
-      #if 1
-      char *argv8[]={"wifi","join"};
-      adw_wifi_cli(2, argv8);
-      printf("\n\n----wifi join ----\n\n");    
-      #endif
-}
 /***************************************************************************
 程序功能：一个按键的单击、长按。 
 ***************************************************************************/
@@ -310,17 +290,17 @@ static unsigned char key_driver(void){
 				key_state_buffer1 = key_state_0;  //转换到按键初始状态
 			}
 			else if(key_timer_cnt1 >= 95){     //长按10s
-			        if(flag_work_mode||flag_connect_fail){
-			         key_return = key_long_long;  //送回长按事件
-				     key_state_buffer1 = key_state_3;  //转换到等待按键释放状态
-			}
+			   if(flag_work_mode||flag_connect_fail){
+			      key_return = key_long_long;  //送回长按事件
+				  key_state_buffer1 = key_state_3;  //转换到等待按键释放状态
+			   }
 			}else if(key_timer_cnt1>=45 ){ //长按5s
-			     if((flag_airkiss_mode==1&&flag_connect_fail==0)||(flag_ap_mode==1&&flag_connect_fail==0)){
-			        key_return = key_long;  //送回长按事件
-				    key_state_buffer1 = key_state_3;  //转换到等待按键释放状态
+			   if((flag_airkiss_mode==1&&flag_connect_fail==0)||(flag_ap_mode==1&&flag_connect_fail==0)){
+			      key_return = key_long;  //送回长按事件
+				  key_state_buffer1 = key_state_3;  //转换到等待按键释放状态
 				}
 			}
-		     break;
+		     break; 
 		  case key_state_3:  //等待按键释放
 		    if(key == 1){  //按键释放
 			  key_state_buffer1 = key_state_0;  //切回按键初始状态
@@ -337,27 +317,27 @@ void key_thread(void){
                    key=key_driver();
                    switch(key){
                           case 1 ://短按继电器控制
-                                if(flag_produce_mode){
+                                 if(flag_produce_mode){
 			                         printf("\n\n\n-----------produce_mode hand key test-------\n\n\n");
                                      time_bl=120;//设置产测指示灯闪烁时间快慢
                                  }else{
-                                      if(OPT_READ){//当前是开状态
-                                          printf("\n\n----prop_send_by_name Switch_Control  0-------\n\n");
-        				                  GPIO_WriteBit(OPT_PIN, 0); 
-        				                  if(flag_work_mode){
-        				                  switch_control =0;
-				                          prop_send_by_name("Switch_Control");
-				                      }
-				                 }else{
-        				                  printf("\n\n----prop_send_by_name Switch_Control  1-------\n\n");
-                				          GPIO_WriteBit(OPT_PIN, 1);
-                				          if(flag_work_mode){
-                				          switch_control =1;
-        				                  prop_send_by_name("Switch_Control");
-				                          }
-				                 } 
-    				           }
-    		                   break;
+                                     if(OPT_READ){//当前是开状态
+                                         printf("\n\n----prop_send_by_name Switch_Control  0-------\n\n");
+        				                 GPIO_WriteBit(OPT_PIN, 0); 
+                				         if(flag_work_mode){
+                				           switch_control =0;
+        				                   prop_send_by_name("Switch_Control");
+        				                 }
+				                     }else{
+				                         printf("\n\n----prop_send_by_name Switch_Control  1-------\n\n");
+        				                 GPIO_WriteBit(OPT_PIN, 1);
+        				                 if(flag_work_mode){
+        				                   switch_control =1;
+				                           prop_send_by_name("Switch_Control");
+				                         }
+				                     } 
+    				             }
+    				             break;
 		                   case 3 ://长按按键进入模式切换5s
 		                         if(flag_airkiss_mode==1&&flag_work_mode==0&&flag_ap_mode==0){
     				                 //设置为AP方式
@@ -388,7 +368,7 @@ void key_thread(void){
         				         }
 		                         break;
                             case 4 ://长按10s进入恢复出厂设置状态（清除所有配置，包括WiFi配置，定时配置等）
-                                  if(flag_work_mode==1||flag_connect_fail==1||flag_fixed_ssid_fail==1) {
+                                  if(flag_work_mode==1||flag_connect_fail==1) {
                                      printf("------set from work to default airkiss mode and reset factory---\n");
                                      //①恢复出厂设置，继电器状态维持不变，进入airkiss默认配网
                                      conf_reset_factory();
@@ -416,6 +396,114 @@ void KEY_Indicate(void)
   if(xTaskCreate(key_thread, ((const char*)"key_set"), STACKSIZE_KEY, NULL, tskIDLE_PRIORITY + 1, NULL) != pdPASS)
 		printf("\n\r%s xTaskCreate(key_set) failed", __FUNCTION__);
 }
+
+//串口数据发送
+void uart_send_string(serial_t *sobj, char *pstr){
+    unsigned int i=0;
+    while (*(pstr+i) != 0) {
+        serial_putc(sobj, *(pstr+i));
+        i++;
+    }
+}
+//串口数据接收中断
+static void uart_irq(uint32_t id, SerialIrq event){
+             serial_t    *sobj = (serial_t  *)id;
+             if(event == RxIrq) {
+                 rc =serial_getc(sobj);
+                  //printf("  recv:%x\n",rc);
+                  if(SENSOR_UART.RxDealStep>1){
+                        SENSOR_UART.RxDataFlag = TRUE;
+                        SENSOR_UART.RxTimeOutCnt=0;
+                  } 
+        	 switch(SENSOR_UART.RxDealStep){
+                     case 0:
+        	   	        break;
+        	     case 1:
+        	              if(rc==0x55){	
+        	   	           memset(SENSOR_UART.RxBuff,0,100);//清除接收buf
+        		           SENSOR_UART.RxCnt=0;
+        		           SENSOR_UART.RxBuff[SENSOR_UART.RxCnt++]=rc;
+        		           SENSOR_UART.RxDealStep++;
+        		           SENSOR_UART.RxDataSucFlag=FALSE;
+        		        }				
+        	   	       break;
+        	     case 2:
+        	   	      if(rc==0xFE){
+        	   	          SENSOR_UART.RxBuff[SENSOR_UART.RxCnt++]=rc;
+        		          SENSOR_UART.RxDealStep++;
+        	   	        }
+        		       break;	  
+        	      case 3:
+        	   	       SENSOR_UART.RxBuff[SENSOR_UART.RxCnt++]=rc;
+                               SENSOR_UART.RxLeng=rc;
+        		       SENSOR_UART.RxDealStep++;
+        		       break;
+        	      case 4:
+                	       SENSOR_UART.RxBuff[SENSOR_UART.RxCnt++]=rc;
+                	       if( (SENSOR_UART.RxLeng+30) == SENSOR_UART.RxCnt){
+                                   SENSOR_UART.RxDataSucFlag=TRUE;
+                		   SENSOR_UART.RxDealStep=0; 
+                		   SENSOR_UART.RxDataFlag = FALSE;
+                               }else if( (SENSOR_UART.RxLeng+30) > SENSOR_UART.RxCnt){  //30为数据长度，需要接收的数据很长度
+                                   // 数据没有接收完
+                	       }else { // 数据长度出错  重新接收
+                	           SENSOR_UART.RxDealStep =1;
+                	       } 			 
+                	      break;
+        	      default:
+        	   	     break;
+           }//end switch
+     }  //end      if(event == RxIrq) 
+}
+
+void sensor_uart_init(void){
+    SENSOR_UART.RxLeng = 0;
+    SENSOR_UART.RxDataFlag = FALSE;
+	SENSOR_UART.RxOverFlag = FALSE;
+	SENSOR_UART.RxDataFlag = FALSE;
+	SENSOR_UART.RxTimeOutCnt = 0;
+	SENSOR_UART.TxLeng = 0;
+	SENSOR_UART.RxDealStep = 1;
+	SENSOR_UART.RxCnt = 0;
+	SENSOR_UART.RxDataSucFlag= FALSE;
+}
+
+
+void uart_thread(void){
+    printf("------------uart come in!--------------\n");
+    sensor_uart_init();//标志位初始化
+    serial_t    sobj;
+    //初始化串口
+    serial_init(&sobj,UART_TX,UART_RX);
+    serial_baud(&sobj,9600);//修改波特率
+    serial_format(&sobj, 8, ParityNone, 1);
+    //数据接收中断
+    for(;;)
+    {
+          vTaskDelay(110);
+          serial_irq_handler(&sobj, uart_irq, (uint32_t)&sobj);
+          serial_irq_set(&sobj, RxIrq, 1);
+    }
+   vTaskDelete(NULL);
+}
+//建立串口收发数据线程任务
+void RSUart_Indicate(){
+  if(xTaskCreate(uart_thread, ((const char*)"uart_thread"), STACKSIZE_UART, NULL, tskIDLE_PRIORITY + 1, NULL) != pdPASS)
+		printf("\n\r%s xTaskCreate(uart_thread) failed", __FUNCTION__);  
+}
+void recv_flag_clear_thread(){
+   for(;;){
+        vTaskDelay(400);
+        SENSOR_UART.RxDataSucFlag=FALSE;//重新接收 清除中断接收标志位
+        SENSOR_UART.RxDealStep=1;
+   }
+}
+//建立清除串口中断接收任务
+void RecvFlagClear_Indicate(){
+  if(xTaskCreate(recv_flag_clear_thread, ((const char*)"recv_flag_clear_thread"), STACKSIZE_UART_CLEARRECV, NULL, tskIDLE_PRIORITY + 1, NULL) != pdPASS)
+		printf("\n\r%s xTaskCreate(recv_flag_clear_thread) failed", __FUNCTION__);  
+}
+
 
 
 void prop_send_by_name(const char *name)

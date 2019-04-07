@@ -20,7 +20,7 @@
 #define CLIENT_CONN_WAIT	15000	/* TCP connect wait, matches hc */
 #define CLIENT_LOCAL_WAIT	3000	/* lan response wait, milliseconds */
 #define CLIENT_TRY_THRESH	5	/* threshold till wait time increase */
-#define CLIENT_RETRY_WAIT1	10000	/* init retry wait, milliseconds */
+#define CLIENT_RETRY_WAIT1	2000//10000	/* init retry wait, milliseconds */
 #define CLIENT_RETRY_WAIT2	300000	/* retry wait till threshold */
 #define CLIENT_RETRY_WAIT3	600000	/* retry wait after threshold */
 

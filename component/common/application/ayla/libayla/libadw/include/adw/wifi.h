@@ -9,7 +9,7 @@
 #ifndef __AYLA_ADW_WIFI_H__
 #define __AYLA_ADW_WIFI_H__
 #if CONFIG_PLATFORM_8711B
-#define ADW_WIFI_SCAN_CT	10	/* number of scan results kept */
+#define ADW_WIFI_SCAN_CT	20	/* number of scan results kept */
 #define ADW_WIFI_PROF_CT	5	/* number of profiles */
 #else
 #define ADW_WIFI_SCAN_CT	20	/* number of scan results kept */

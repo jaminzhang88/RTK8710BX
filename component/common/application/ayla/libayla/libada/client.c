@@ -2168,11 +2168,11 @@ extern int flag_work_mode,flag_ap_mode,flag_airkiss_mode,flag_connect_fail,flag_
  */
 enum ada_err client_recv_cmds(struct http_client *hc, void *payload, size_t len)
 {       
-flag_work_mode=1;
-flag_ap_mode=0;
-flag_airkiss_mode=0;
-flag_connect_fail=0;
-flag_device_down=0;
+    flag_work_mode=1;
+    flag_ap_mode=0;
+    flag_airkiss_mode=0;
+    flag_connect_fail=0;
+    flag_device_down=0;
 	struct client_state *state = &client_state;
 
 	if (payload) {
