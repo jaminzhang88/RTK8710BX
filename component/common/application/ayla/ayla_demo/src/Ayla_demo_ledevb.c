@@ -97,7 +97,11 @@ void prop_send_by_name(const char *name);
 uint32_t PIN_DYNAMIC_KEY=PA_12;//默认值
 uint32_t PIN_DYNAMIC_OPT=PA_15;
 uint32_t PIN_DYNAMIC_STATE_LED=PA_22; 
+<<<<<<< HEAD
 uint32_t PIN_DYNAMIC_SW_LED=PA_22; 
+=======
+uint32_t PIN_DYNAMIC_SW_LED=PA_22;
+>>>>>>> 2bd5c6eed99f1b2d4ce1eab71fa951001a70895e
 
 #define KEY_PIN_SET		      PIN_DYNAMIC_KEY    //设置按键
 #define OPT_PIN               PIN_DYNAMIC_OPT    //继电器电源控制引脚
