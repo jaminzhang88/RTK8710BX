@@ -91,7 +91,7 @@ void prop_send_by_name(const char *name);
 #define key_click	       1
 #define key_double	       2
 #define key_long	       3
-#define key_long_long      4
+#define key_long_long      4 
 
 /* 定义 Key/STATE_LED/SW_LED/OPT_IO PIN */
 uint32_t PIN_DYNAMIC_KEY=PA_12;//默认值
