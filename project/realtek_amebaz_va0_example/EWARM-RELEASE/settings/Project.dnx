@@ -104,7 +104,7 @@
         <mode>0</mode>
     </DisassembleMode>
     <Breakpoints2>
-        <Bp0>_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\..\..\component\common\application\ayla\ayla_demo\src\Ayla_demo_ledevb.c}.525.1" 0 0 1 "" 0 "" 0</Bp0>
+        <Bp0>_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\..\..\component\common\application\ayla\ayla_demo\src\Ayla_demo_ledevb.c}.447.1" 0 0 1 "" 0 "" 0</Bp0>
         <Bp1>_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\..\..\component\common\application\ayla\libayla\libayla\conf.c}.2819.1" 0 0 1 "" 0 "" 0</Bp1>
         <Count>2</Count>
     </Breakpoints2>

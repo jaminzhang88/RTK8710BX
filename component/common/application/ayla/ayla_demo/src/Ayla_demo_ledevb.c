@@ -182,7 +182,8 @@ static struct ada_sprop demo_props[] = {
  * Initialize property manager.
  */
 void demo_init(void)
-{       
+{   
+    #if 1
     char *argv1[] = { "conf", "getdata1" };
     conf_cli(2, argv1);
     vTaskDelay(200);
@@ -195,6 +196,7 @@ void demo_init(void)
     char *argv4[] = { "conf", "getdata4" };
     conf_cli(2, argv4);
     vTaskDelay(200);
+    #endif
 	ada_sprop_mgr_register("SN0-01-0-001", demo_props, ARRAY_LEN(demo_props));
 }
 
@@ -228,7 +230,7 @@ void LED_SINGLE_LightOff(void)
 void led_thread(void *param)
 {   
         sys_jtag_off(); 
-        // init_led_key(); 
+        //init_led_key(); 
         for(;;){ 
                 vTaskDelay(130);
                 if(flag_airkiss_mode==1&&flag_work_mode==0&&flag_ap_mode==0&&flag_connect_fail==0) {LED_SINGLE_Fast();}		   

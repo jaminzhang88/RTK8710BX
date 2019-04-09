@@ -27,8 +27,7 @@ extern void console_init(void);
   * @retval None
   */
 void main(void)
-{
-printf("\n\n--------MAIN  IN AILIAN PRODUCE  MODE-------------\n\n");
+{ 
 #if CONFIG_AYLA
     	if ( rtl_cryptoEngine_init() != 0 ) {
 		DiagPrintf("crypto engine init failed\r\n");			
