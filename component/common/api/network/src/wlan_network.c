@@ -48,7 +48,7 @@ void init_thread(void *param)
 #if CONFIG_WIFI_IND_USE_THREAD
 	wifi_manager_init();
 #endif
-        ayla_wlan_init();
+    ayla_wlan_init();
 #if CONFIG_WLAN
 	wifi_on(RTW_MODE_STA);
 #if CONFIG_AUTO_RECONNECT

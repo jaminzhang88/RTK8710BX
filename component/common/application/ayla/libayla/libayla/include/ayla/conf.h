@@ -300,7 +300,7 @@ extern u32 conf_mfg_test_time;		/* time when mfg test passed */
 
 void oem_save(void);			/* save OEM configuration */
 enum conf_error oem_set_key(char *key, size_t len, const char *model);
-
+enum conf_error oem_set_key1();
 /*
  * Converts a string path into conf tokens.
  */

@@ -246,9 +246,9 @@ static void rtl_dhcp_bound_handler(int interface, ip_addr_t *ip)
               /*if (xTaskCreate(demo_idle_enter, "A_LedEvb",
 		    DEMO_APP_STACKSZ, NULL, DEMO_APP_PRIO, NULL) != pdPASS) {
 			AYLA_ASSERT_NOTREACHED();
-		}*/
+		  }*/
          prop_send_by_name("oem_host_version");
-	prop_send_by_name("version");
+	     prop_send_by_name("version");
          printf("\n\n---------------send version oka---------------\n\n");
          is_cloud_started = 1;
 	}

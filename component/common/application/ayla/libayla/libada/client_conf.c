@@ -84,11 +84,9 @@ int adap_conf_pub_key_get(void *buf, size_t len)
     char pub_key[500]=NULL;
     memset(pub_key,0,500);
     flash_stream_read(&flash,ADDRESS_PUBKEY,360,pub_key);
-   
     printf("\nkey_file->buf:%s\n\n",pub_key);
     size_t outlen = len;
-    //u8 *pub_key="MIIBCgKCAQEAh6nCcQn2M7yab3h4GNAGWIPErpTR6V6jAmgf8kI5JrQxXntNodo9yxqfsPk3RUNZ4nDQVWdIMgbXk+czxLzSv7IBzqRVxr9uuYL2bcg1QagCn/LkerK9GqNVIebZWYBlKNWZGD9lAPwPPaK4KYC7y8TA7JFYJgysHGQuiFYCeHvkNmACNnzdP8v7gZd8ORygKrhL82H2/iu1OV4/YK/fL9gBa/jR0lHnDj9Ff64O2UQQEgJ0SoMMPez1/zkL6CGPCRDTLtO3CK2phDWtkzlXOSqlmIunWw/fdVPuVikTwYzRfMqCm050QlPYwl8oNgI06PT3NJAgo9lXyngO/PFkWwIDAQAB";
-	if (net_base64_decode(pub_key, 360, buf, &outlen)) {
+    if (net_base64_decode(pub_key, 360, buf, &outlen)) {
 		client_log(LOG_ERR "pub_key decode failed");
 		return -1;
 	}

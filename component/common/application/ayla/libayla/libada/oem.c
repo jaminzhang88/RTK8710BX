@@ -88,7 +88,7 @@ extern unsigned int  ADDRESS_PUBKEY;
 extern unsigned int  ADDRESS_OEMKEY;
 enum conf_error oem_set_key(char *key, size_t key_len, const char *model)
 {
-    #if 0
+    #if 1
 	char buf[CONF_OEM_KEY_MAX + 1];
 	char pub_key[CLIENT_CONF_PUB_KEY_LEN];
 	int pub_key_len;
@@ -138,7 +138,18 @@ out:
 	#endif
 	
 }
+enum conf_error oem_set_key1(){
+    char pub_key[CLIENT_CONF_PUB_KEY_LEN];
+	int pub_key_len;
+	pub_key_len=adap_conf_pub_key_get1(pub_key,sizeof(pub_key));
+	printf("\n\npub_key-:%s\nlen:%d\n",pub_key,pub_key_len);
+	u8 rc = adap_conf_set(ADA_CONF_OEM_KEY, pub_key, 256);
+	if (rc) {
+		conf_log(LOG_ERR "oem_key save failed");
+	}
+	return rc;
 
+}
 /*
  * Set OEM items
  */

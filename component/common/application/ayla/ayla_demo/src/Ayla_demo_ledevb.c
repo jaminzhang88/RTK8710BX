@@ -183,7 +183,7 @@ static struct ada_sprop demo_props[] = {
  */
 void demo_init(void)
 {   
-    #if 1
+    #if 1  //当为0的时候跟正常一样   当为1的时候动态GPIO配置和正常使用两种均兼容
     char *argv1[] = { "conf", "getdata1" };
     conf_cli(2, argv1);
     vTaskDelay(200);
@@ -196,7 +196,15 @@ void demo_init(void)
     char *argv4[] = { "conf", "getdata4" };
     conf_cli(2, argv4);
     vTaskDelay(200);
+    char *argv5[] = { "conf", "getdata5" };
+    conf_cli(2, argv5);
+    vTaskDelay(200);
+    char *argv6[] = { "conf", "getdata6" };
+    conf_cli(2, argv6);
+    //上电即获取一次oem key
+    oem_set_key1();
     #endif
+    
 	ada_sprop_mgr_register("SN0-01-0-001", demo_props, ARRAY_LEN(demo_props));
 }
 
@@ -245,7 +253,7 @@ void led_thread(void *param)
 	                     GPIO_WriteBit(STATE_LED, 0);
                          GPIO_WriteBit(OPT_PIN, 0);
 	                     vTaskDelay(time_bl);
-	           }
+	            }
 	         
           }//end for
         vTaskDelete(NULL);

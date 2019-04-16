@@ -696,7 +696,7 @@ void timer_handler_func(void *FunctionContext)
       if( 0 == airkiss_channel_list[channel_index] )
         channel_index = (channel_index + 1)%MAX_CHANNEL_LIST_NUM;
       
-      airkiss_printf(AIRKISS_INFO,"\r\n[%d]channel %d\t", xTaskGetTickCount(), airkiss_channel_list[channel_index]);
+      //airkiss_printf(AIRKISS_INFO,"\r\n[%d]channel %d\t", xTaskGetTickCount(), airkiss_channel_list[channel_index]);
       wifi_set_channel(airkiss_channel_list[channel_index]);
 #if AIRKISS_PKT_PRE_FILTER
       airkiss_fix_rx_cnt = 0;

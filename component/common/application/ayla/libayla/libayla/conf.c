@@ -2908,17 +2908,17 @@ void conf_cli(int argc, char **argv)
     if (argc == 2&& !strcmp(argv[1], "erase")){
           flash_t  flash;
           flash_erase_sector(&flash,  ADDRESS);
+          flash_erase_sector(&flash,  ADDRESS_PUBKEY);
+          flash_erase_sector(&flash,  ADDRESS_OEMKEY);
     }
 
      
-     // conf state_led GPIO9 high MODE1 MODE2
-     if (argc == 5&& !strcmp(argv[1], "state_led")){
+      //conf io <name> <port> <level>  conf io state_led GPIO9 high 
+     if (argc == 5&& !strcmp(argv[1], "io")&&!strcmp(argv[2], "state_led")){
         flash_t  flash;
         char data[50]=NULL;
         char sign[3]="***";
-        strcpy(data,argv[1]);
-        strcat(data,sign);
-        strcat(data,argv[2]);
+        strcpy(data,argv[2]);
         strcat(data,sign);
         strcat(data,argv[3]);
         strcat(data,sign);
@@ -2933,16 +2933,17 @@ void conf_cli(int argc, char **argv)
           printf("\npara set err\r\n");
         }
       }
-     //conf sw_led GPIO18 high
-     if (argc == 4&& !strcmp(argv[1], "sw_led")){
+     
+       //conf io sw_led GPIO18 high
+     if (argc == 5&& !strcmp(argv[1], "io")&&!strcmp(argv[2], "sw_led")){
         flash_t  flash;
         char data[50]=NULL;
         char sign[3]="***";
-        strcpy(data,argv[1]);
-        strcat(data,sign);
-        strcat(data,argv[2]);
+        strcpy(data,argv[2]);
         strcat(data,sign);
         strcat(data,argv[3]);
+        strcat(data,sign);
+        strcat(data,argv[4]);
         printf("sw_led-data:%s\n",data);
         u8 return_value=flash_stream_write(&flash,  ADDRESS+50, 50,data);
         char *argv2[] = { "conf", "save" };
@@ -2954,16 +2955,17 @@ void conf_cli(int argc, char **argv)
         }
       }
 
-      //conf button GPIO6 low
-      if (argc == 4&& !strcmp(argv[1], "button")){
+
+      //conf io button GPIO6 low
+      if (argc == 5&& !strcmp(argv[1], "io")&&!strcmp(argv[2], "button")){
         flash_t  flash;
         char data[50]=NULL;
         char sign[3]="***";
-        strcpy(data,argv[1]);
-        strcat(data,sign);
-        strcat(data,argv[2]);
+        strcpy(data,argv[2]);
         strcat(data,sign);
         strcat(data,argv[3]);
+        strcat(data,sign);
+        strcat(data,argv[4]);
         printf("button-data:%s\n",data);
         u8 return_value=flash_stream_write(&flash,ADDRESS+100, 50,data);
         char *argv2[] = { "conf", "save" };
@@ -2974,14 +2976,15 @@ void conf_cli(int argc, char **argv)
           printf("\npara set err\r\n");
         }
       }
-     // conf relay GPIO19 high 0
-     if (argc == 5&& !strcmp(argv[1], "relay")){
+
+
+      
+      // conf io relay GPIO19 high 
+     if (argc == 5&& !strcmp(argv[1], "io")&&!strcmp(argv[2], "relay")){
         flash_t  flash;
         char data[50]=NULL;
         char sign[3]="***";
-        strcpy(data,argv[1]);
-        strcat(data,sign);
-        strcat(data,argv[2]);
+        strcpy(data,argv[2]);
         strcat(data,sign);
         strcat(data,argv[3]);
         strcat(data,sign);
@@ -2997,14 +3000,49 @@ void conf_cli(int argc, char **argv)
         }
       }
 
+       // conf net  <mode1> <mode2>  从内存地址400之后开始
+     if (argc == 4&& !strcmp(argv[1], "net")){
+        flash_t  flash;
+        char data[20]=NULL;
+        char sign[3]="***";
+        strcpy(data,argv[2]);
+        strcat(data,sign);
+        strcat(data,argv[3]);
+        printf("net-data:%s\n",data);
+        u8 return_value=flash_stream_write(&flash,  ADDRESS+400, 20,data);
+        char *argv2[] = { "conf", "save" };
+        conf_cli(2, argv2);
+        if(return_value==1){
+          printf("\npara set ok\r\n");
+        }else{
+          printf("\npara set err\r\n");
+        }
+      }
+
+       // conf cfg  <net> <relay>  从内存地址400之后开始
+     if (argc == 4&& !strcmp(argv[1], "cfg")){
+        flash_t  flash;
+        char data[20]=NULL;
+        char sign[3]="***";
+        strcpy(data,argv[2]);
+        strcat(data,sign);
+        strcat(data,argv[3]);
+        printf("cfg-data:%s\n",data);
+        u8 return_value=flash_stream_write(&flash,  ADDRESS+420, 20,data);
+        char *argv2[] = { "conf", "save" };
+        conf_cli(2, argv2);
+        if(return_value==1){
+          printf("\npara set ok\r\n");
+        }else{
+          printf("\npara set err\r\n");
+        }
+      }
+
+
+
+
       
-
-
-
-
-
-      
-      //获取配置值
+    //获取配置值
       if (argc == 2&& !strcmp(argv[1], "getdata1")){
             flash_t  flash;
             char data[50]=NULL;
@@ -3024,10 +3062,7 @@ void conf_cli(int argc, char **argv)
 	        temp = strtok(NULL,"***");
 	        snprintf(argv3,strlen(temp)+1,"%s",temp);
 	        printf("%s\n",argv3);
-	        temp = strtok(NULL,"***");
-	        snprintf(argv4,strlen(temp)+1,"%s",temp);
-	        printf("%s\n",argv4);
-            //设置state_lede  state_ledGPIO9high4
+	        //设置state_lede  state_ledGPIO9high4
             char temp_io_num[2]=NULL; //数字
 	        memcpy(temp_io_num,argv2+4,2);
             int io_num=atoi_io(temp_io_num);
@@ -3039,6 +3074,7 @@ void conf_cli(int argc, char **argv)
                flag_state_led=0;
             }
       } 
+      
       
 
       if (argc == 2&& !strcmp(argv[1], "getdata2")){
@@ -3071,7 +3107,9 @@ void conf_cli(int argc, char **argv)
                flag_sw_led=0;
             }
       }
-      if (argc == 2&& !strcmp(argv[1], "getdata3")){
+
+      
+     if (argc == 2&& !strcmp(argv[1], "getdata3")){
             flash_t  flash;
             char data[50]=NULL;
             memset(data,0,50);
@@ -3101,6 +3139,8 @@ void conf_cli(int argc, char **argv)
                flag_button=0;
             }
       }
+
+      
       if (argc == 2&& !strcmp(argv[1], "getdata4")){
             flash_t  flash;
             char data[50]=NULL;
@@ -3121,9 +3161,7 @@ void conf_cli(int argc, char **argv)
 	        temp = strtok(NULL,"***");
 	        snprintf(argv3,strlen(temp)+1,"%s",temp);
 	        printf("%s\n",argv3);
-	        temp = strtok(NULL,"***");
-	        snprintf(argv4,strlen(temp)+1,"%s",temp);
-	        printf("%s\n",argv4);
+	        
             char temp_io_num[2]=NULL; //数字
 	        memcpy(temp_io_num,argv2+4,2);
             int io_num=atoi_io(temp_io_num);
@@ -3131,24 +3169,62 @@ void conf_cli(int argc, char **argv)
             io_init(io_num,4);//IO口初始化
             if(argv3[0]=='h'){ //高电平驱动
                 flag_relay=1;
-                if(argv4[0]=='0'){ //上电状态
-                   GPIO_WriteBit(PIN_DYNAMIC_OPT, 0);
-                }else if(argv4[0]=='1'){
-                   GPIO_WriteBit(PIN_DYNAMIC_OPT, 1);
-                }else if(1){
-                 //断电记忆
-                }
             }else if(argv3[0]=='l'){ //低电平驱动
                 flag_relay=0;
-                if(argv4[0]=='0'){
-                   GPIO_WriteBit(PIN_DYNAMIC_OPT, 1);
-                }else if(argv4[0]=='1'){
-                   GPIO_WriteBit(PIN_DYNAMIC_OPT, 0);
-                }else if(1){
-                 //断电记忆
-                }
             }
         }
+
+        if (argc == 2&& !strcmp(argv[1], "getdata5")){
+            flash_t  flash;
+            char data[20]=NULL;
+            memset(data,0,20);
+            flash_stream_read(&flash,ADDRESS+400,20,data);
+            printf("\n\ndata:%s\n\n",data);
+ 
+            char*temp = strtok(data,"***");
+            char argv1[10];// mode1
+	        char argv2[10];// mode2
+            snprintf(argv1,strlen(temp)+1,"%s",temp);
+	        printf("%s\n",argv1);
+            temp = strtok(NULL,"***");
+	        snprintf(argv2,strlen(temp)+1,"%s",temp);
+	        printf("%s\n",argv2);
+
+	        char temp_io_num1[2]=NULL; //数字
+	        char temp_io_num2[2]=NULL; //数字
+	        memcpy(temp_io_num1,argv1,2);
+	        memcpy(temp_io_num2,argv2,2);
+            int io_num1=atoi_io(temp_io_num1);
+            int io_num2=atoi_io(temp_io_num2);
+            printf("io_num1:%d--io_num2:%d\n",io_num1,io_num2);
+            //取出MODE1和MODE2之后的动作
+        }
+
+        if (argc == 2&& !strcmp(argv[1], "getdata6")){
+            flash_t  flash;
+            char data[20]=NULL;
+            memset(data,0,20);
+            flash_stream_read(&flash,ADDRESS+420,20,data);
+            printf("\n\ndata:%s\n\n",data);
+           
+            char*temp = strtok(data,"***");
+            char argv1[10];// mode1
+	        char argv2[10];// mode2
+            snprintf(argv1,strlen(temp)+1,"%s",temp);
+	        printf("%s\n",argv1);
+            temp = strtok(NULL,"***");
+	        snprintf(argv2,strlen(temp)+1,"%s",temp);
+	        printf("%s\n",argv2);
+
+	        char temp_io_num1[2]=NULL; //数字
+	        char temp_io_num2[2]=NULL; //数字
+	        memcpy(temp_io_num1,argv1,2);
+	        memcpy(temp_io_num2,argv2,2);
+            int io_num1=atoi_io(temp_io_num1);
+            int io_num2=atoi_io(temp_io_num2);
+            printf("io_num1:%d--io_num2:%d\n",io_num1,io_num2);
+            //取出MODE1和MODE2之后的动作
+        }  
 }
 
 /*
