@@ -115,6 +115,8 @@ ASSERT_SIZE(enum, conf_token, 1);	/* may grow, but should be constant */
 enum adw_wifi_setup_mode {
 	WIFI_AIRKISS = BIT(0),
 	/* Could also use MFi */
+    WIFI_BLE = BIT(1), //À¶ÑÀÅäÍø
+    WIFI_STANDBY = BIT(2), //´ý»ú
 } PACKED;
 
 ASSERT_SIZE(enum, adw_wifi_setup_mode, 1);

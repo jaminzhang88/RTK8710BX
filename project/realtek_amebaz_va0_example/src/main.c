@@ -51,10 +51,13 @@ void main(void)
       UART_Indicate();//初始化串口
       RSUart_Indicate();//串口数据收发线程
       RecvFlagClear_Indicate();//清除串口中断接收
+
+      Printf_Indicate();//打印进程
+      
 #endif
 
 	/* Execute application example */
-//	example_entry();
+    //example_entry();
 
     	/*Enable Schedule, Start Kernel*/
 #if defined(CONFIG_KERNEL) && !TASK_SCHEDULER_DISABLED

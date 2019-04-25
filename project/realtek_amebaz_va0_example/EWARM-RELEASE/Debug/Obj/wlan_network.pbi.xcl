@@ -3,6 +3,8 @@
 -ferror-limit=0
 -fbracket-depth=512
 -I
+C:\Users\wyc\Desktop\开发项目集\（8）Realtek8710BX\RTL8710BX\RTK8710BX\component\common\api\network\src
+-I
 C:\Users\wyc\Desktop\开发项目集\（8）Realtek8710BX\RTL8710BX\RTK8710BX\project\realtek_amebaz_va0_example\EWARM-RELEASE\..\inc
 -I
 C:\Users\wyc\Desktop\开发项目集\（8）Realtek8710BX\RTL8710BX\RTK8710BX\project\realtek_amebaz_va0_example\EWARM-RELEASE\..\..\..\component\os\freertos
@@ -155,9 +157,9 @@ C:\Users\wyc\Desktop\开发项目集\（8）Realtek8710BX\RTL8710BX\RTK8710BX\pr
 -I
 C:\Users\wyc\Desktop\开发项目集\（8）Realtek8710BX\RTL8710BX\RTK8710BX\project\realtek_amebaz_va0_example\EWARM-RELEASE\..\..\..\component\common\application\airkiss
 -I
-C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.0\arm\inc
+C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.2_2\arm\inc
 -I
-C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.0\arm\inc\c
+C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.2_2\arm\inc\c
 -I
 C:\Users\wyc\Desktop\开发项目集\（8）Realtek8710BX\RTL8710BX\RTK8710BX\project\realtek_amebaz_va0_example\inc
 -I
@@ -442,6 +444,8 @@ C:\Users\wyc\Desktop\开发项目集\（8）Realtek8710BX\RTL8710BX\RTK8710BX\co
 -D__DOUBLE_ALIGN__=8
 -D__LONG_DOUBLE_SIZE__=8
 -D__LONG_DOUBLE_ALIGN__=8
+-D____FP16_SIZE__=2
+-D____FP16_ALIGN__=2
 -D__NAN_HAS_HIGH_MANTISSA_BIT_SET__=0
 -D__SUBNORMAL_FLOATING_POINTS__=1
 -D__SIZE_T_TYPE__=unsigned int
@@ -458,9 +462,10 @@ C:\Users\wyc\Desktop\开发项目集\（8）Realtek8710BX\RTL8710BX\RTK8710BX\co
 -D__JMP_BUF_ELEMENT_TYPE__=unsigned long long int
 -D__JMP_BUF_NUM_ELEMENTS__=16
 -D__TID__=0xcf60
--D__VER__=8022002
--D__BUILD_NUMBER__=15995
+-D__VER__=8032001
+-D__BUILD_NUMBER__=169
 -D__IAR_SYSTEMS_ICC__=9
+-D_MAX_ALIGNMENT=8
 -D__LITTLE_ENDIAN__=1
 -D__BOOL_TYPE__=unsigned char
 -D__BOOL_SIZE__=1
@@ -486,8 +491,10 @@ C:\Users\wyc\Desktop\开发项目集\（8）Realtek8710BX\RTL8710BX\RTK8710BX\co
 -D__CODE_MEM0_UNIQUE_POINTER__=1
 -D__HEAP_MEM0__=0
 -D__HEAP_DEFAULT_MEM__=0
+-D__HEAPND_MEMORY_LIST1__()=
 -D__MULTIPLE_HEAPS__=0
 -D__DEF_HEAP_MEM__=__data
+-D__DEF_STACK_MEM_INDEX__=0
 -D__PRAGMA_PACK_ON__=1
 -D__MULTIPLE_INHERITANCE__=1
 -D__AAPCS_VFP__=1
@@ -513,17 +520,32 @@ C:\Users\wyc\Desktop\开发项目集\（8）Realtek8710BX\RTL8710BX\RTK8710BX\co
 -D__ARMVFP_FP16__=1
 -D__ARMVFP_SP__=1
 -D__ARMVFP__=__ARMVFPV4__
+-D__ARM_32BIT_STATE=1
+-D__ARM_ACLE=201
+-D__ARM_ALIGN_MAX_PWR=8
+-D__ARM_ALIGN_MAX_STACK_PWR=3
 -D__ARM_ARCH=7
 -D__ARM_ARCH_ISA_THUMB=2
 -D__ARM_ARCH_PROFILE='M'
--D__ARM_BIG_ENDIAN=0
+-D__ARM_FEATURE_CLZ=1
+-D__ARM_FEATURE_COPROC=15
 -D__ARM_FEATURE_DSP=1
 -D__ARM_FEATURE_FMA=1
 -D__ARM_FEATURE_IDIV=1
+-D__ARM_FEATURE_LDREX=7
+-D__ARM_FEATURE_QBIT=1
+-D__ARM_FEATURE_SAT=1
+-D__ARM_FEATURE_SIMD32=1
 -D__ARM_FEATURE_UNALIGNED=1
 -D__ARM_FP=6
+-D__ARM_FP16_ARGS=1
+-D__ARM_FP16_FORMAT_IEEE=1
 -D__ARM_MEDIA__=1
+-D__ARM_PCS_VFP=1
 -D__ARM_PROFILE_M__=1
+-D__ARM_SIZE_MINIMAL_ENUM=4
+-D__ARM_SIZE_WCHAR_T=4
+-D__CODE_SIZE_LIMIT=0
 -D__CORE__=__ARM7EM__
 -D__CPU_MODE__=1
 -D__ICCARM_INTRINSICS_VERSION__=2
@@ -535,10 +557,12 @@ C:\Users\wyc\Desktop\开发项目集\（8）Realtek8710BX\RTL8710BX\RTK8710BX\co
 -D__HAS_JOINED_TYPES__=1
 -D__HAS_LOCATED_DECLARATION__=1
 -D__HAS_LOCATED_WITH_INIT__=1
--D__IAR_COMPILERBASE__=655878
--D__IAR_COMPILERBASE_STR__=10.2.6.201
+-D__IAR_COMPILERBASE__=656390
+-D__IAR_COMPILERBASE_STR__=10.4.6.1115
 -D__UNICODE_SOURCE_SUPPORTED__=1
+-D__VTABLE_MEM__=
 -D__SIGNED_CHARS__=1
+-D__PRAGMA_REDEFINE_EXTNAME=1
 -D__STDC__=1
 -D__STDC_VERSION__=201112L
 -D__STDC_NO_VLA__=1
@@ -557,11 +581,12 @@ C:\Users\wyc\Desktop\开发项目集\（8）Realtek8710BX\RTL8710BX\RTK8710BX\co
 -D__EDG_IA64_ABI=1
 -D__EDG_IA64_ABI_VARIANT_CTORS_AND_DTORS_RETURN_THIS=1
 -D__EDG_IA64_ABI_USE_INT_STATIC_INIT_GUARD=1
+-D__cpp_hex_float=201603
 -D__cpp_unicode_literals=200710
 -D__cpp_static_assert=200410
 -D__EDG_TYPE_TRAITS_ENABLED=1
 -D__EDG__=1
--D__EDG_VERSION__=413
+-D__EDG_VERSION__=414
 -D__EDG_SIZE_TYPE__=unsigned int
 -D__EDG_PTRDIFF_TYPE__=int
 -D__EDG_DELTA_TYPE=int
@@ -580,9 +605,9 @@ C:\Users\wyc\Desktop\开发项目集\（8）Realtek8710BX\RTL8710BX\RTK8710BX\co
 -D__EDG_FLOAT80_ENABLING_POSSIBLE=0
 -D__EDG_FLOAT128_ENABLING_POSSIBLE=0
 -DCONFIG_PLATFORM_8711B=1
--D_DLIB_CONFIG_FILE_HEADER_NAME="C:\\Program Files (x86)\\IAR Systems\\Embedded Workbench 8.0\\arm\\INC\\c\\DLib_Config_Normal.h"
--D_DLIB_CONFIG_FILE_STRING="C:\\Program Files (x86)\\IAR Systems\\Embedded Workbench 8.0\\arm\\INC\\c\\DLib_Config_Normal.h"
--D__VERSION__="IAR ANSI C/C++ Compiler V8.22.2.15995/W32 for ARM"
+-D_DLIB_CONFIG_FILE_HEADER_NAME="C:\\Program Files (x86)\\IAR Systems\\Embedded Workbench 8.2_2\\arm\\inc\\c\\DLib_Config_Normal.h"
+-D_DLIB_CONFIG_FILE_STRING="C:\\Program Files (x86)\\IAR Systems\\Embedded Workbench 8.2_2\\arm\\inc\\c\\DLib_Config_Normal.h"
+-D__VERSION__="IAR ANSI C/C++ Compiler V8.32.1.169/W32 for ARM"
 -D__ICCARM_OLD_DEFINED_VAARGS__=1
 -D__VA_STACK_ALIGN__=8
 -D__CODE_MEMORY_LIST1__()=__CODE_MEM_HELPER1__(__code, 0 )

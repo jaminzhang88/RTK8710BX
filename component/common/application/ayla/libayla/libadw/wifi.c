@@ -2023,6 +2023,18 @@ up_state:
 				break;
 			}
 #endif /* AIRKISS */
+           //增加蓝牙配网模式
+            /*if (wifi->setup_mode & WIFI_BLE) {
+               dw_wifi_start_ble(adw_wifi_alt_setup);
+               wifi->state = WS_UP_AP;
+               break;
+            }*/
+             //增加待机模式
+            if (wifi->setup_mode & WIFI_STANDBY) {
+              //待机
+              wifi->state = WS_UP_AP;
+              break;
+            }
 			adw_wifi_start_ap(wifi);
 #ifdef NFC_WIFI_SETUP
 			adw_wifi_start_nfc(adw_wifi_alt_setup);
