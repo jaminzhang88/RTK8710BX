@@ -48,10 +48,11 @@ void main(void)
       Led_Indicate(); //LED灯主线程
       KEY_Indicate(); //按键主线程
 
+      //串口通信相关
       UART_Indicate();//初始化串口
       RSUart_Indicate();//串口数据收发线程
       RecvFlagClear_Indicate();//清除串口中断接收
-
+      
       Printf_Indicate();//打印进程
       
 #endif

@@ -100,12 +100,8 @@ void prop_send_by_name(const char *name);
 #define key_long	       3
 #define key_long_long      4 
 
-/* 定义 Key/STATE_LED/SW_LED/OPT_IO PIN */
-/*uint32_t PIN_DYNAMIC_KEY=PA_12;//默认值
-uint32_t PIN_DYNAMIC_OPT=PA_15;
-uint32_t PIN_DYNAMIC_STATE_LED=PA_22; 
-uint32_t PIN_DYNAMIC_SW_LED=PA_22; */
-uint32_t PIN_DYNAMIC_KEY;//默认值
+
+uint32_t PIN_DYNAMIC_KEY;
 uint32_t PIN_DYNAMIC_OPT;
 uint32_t PIN_DYNAMIC_STATE_LED; 
 uint32_t PIN_DYNAMIC_SW_LED; 
@@ -201,7 +197,8 @@ static struct ada_sprop demo_props[] = {
  */
 void demo_init(void)
 {   
-    #if 1  //当为0的时候跟正常一样   当为1的时候动态GPIO配置和正常使用两种均兼容
+    #if 1  //当为0的时候跟正常插座一样，同时init_led_key()IO口初始化函数要打开   
+    //当为1的时候动态GPIO配置和正常使用两种均兼容
     char *argv5[] = { "conf", "getdata5" };
     conf_cli(2, argv5);
     vTaskDelay(200);
@@ -222,13 +219,6 @@ void demo_init(void)
     vTaskDelay(200);
     //上电即获取一次oem key
     oem_set_key1();
-    flash_t  flash;
-    char data2[20];
-    memset(data2,0,20);
-    flash_stream_read(&flash,ADDRESS_MEM+450,20,data2);
-    for(int i=0;i<10;i++){
-       printf("data2begin:%c\n",data2[i]); 
-    }
     #endif
     ada_sprop_mgr_register("SN0-01-0-001", demo_props, ARRAY_LEN(demo_props));
 }
@@ -236,11 +226,11 @@ void demo_init(void)
 //wifi状态指示灯快闪
 void STATE_LED_Fast(void)
 {
-    if(flag_state_led==1){
+    if(flag_state_led==1){  //高电平驱动
     	GPIO_WriteBit(STATE_LED, 1);
     	vTaskDelay(150);
     	GPIO_WriteBit(STATE_LED, 0);
-    }else if(flag_state_led==0){
+    }else if(flag_state_led==0){ //低电平驱动
         GPIO_WriteBit(STATE_LED, 0);
     	vTaskDelay(150);
     	GPIO_WriteBit(STATE_LED, 1);
@@ -249,33 +239,35 @@ void STATE_LED_Fast(void)
 //wifi状态指示灯慢闪
  void STATE_LED_Slow(void)
 {
-    if(flag_state_led==1){
+    if(flag_state_led==1){//高电平驱动
     	GPIO_WriteBit(STATE_LED, 0);
     	vTaskDelay(700);
     	GPIO_WriteBit(STATE_LED, 1);
     	vTaskDelay(700);	
-	}else if(flag_state_led==0){
+	}else if(flag_state_led==0){//低电平驱动
         GPIO_WriteBit(STATE_LED, 1);
     	vTaskDelay(700);
     	GPIO_WriteBit(STATE_LED, 0);
     	vTaskDelay(700);
     }
 } 
+
 //wifi状态灯常亮 
 void STATE_LED_LightOn(void)
 {
-    if(flag_state_led==1){
+    if(flag_state_led==1){ //高电平驱动
        GPIO_WriteBit(STATE_LED, 1);
-    }else if(flag_state_led==0){
+    }else if(flag_state_led==0){   //低电平驱动
        GPIO_WriteBit(STATE_LED, 0);
     }	
 }
+
 //wifi状态灯熄灭
 void STATE_LED_LightOff(void)
 {
-	if(flag_state_led==1){
+	if(flag_state_led==1){   //高电平驱动
        GPIO_WriteBit(STATE_LED, 0);
-    }else if(flag_state_led==0){
+    }else if(flag_state_led==0){  //低电平驱动
        GPIO_WriteBit(STATE_LED, 1);
     }
 } 
@@ -331,7 +323,7 @@ void SW_LED_LightOff(void)
 void led_thread(void *param)
 {   
         sys_jtag_off(); 
-        //init_led_key(); 
+        //init_led_key(); //IO口初始化
         for(;;){ 
                 vTaskDelay(130);
                 if(flag_airkiss_mode==1&&flag_work_mode==0&&flag_ap_mode==0&&flag_connect_fail==0) {STATE_LED_Fast();}		   
@@ -342,7 +334,6 @@ void led_thread(void *param)
                      case 0:STATE_LED_LightOff();break;
                      case 1:STATE_LED_LightOn();break;
                      case 2://同继电器状态
-                           //printf("flag_net_mode1:case 2\n");
                            if(OPT_READ){
                               if(flag_relay==1){
                                 STATE_LED_LightOn();
@@ -366,8 +357,7 @@ void led_thread(void *param)
                      case 0:STATE_LED_LightOff();break;
                      case 1:STATE_LED_LightOn();break;
                      case 2://同继电器
-                           //printf("flag_net_mode2:case 2\n");
-                           if(OPT_READ){
+                          if(OPT_READ){
                               if(flag_relay==1){
                                 STATE_LED_LightOn();
                               }else if(flag_relay==0){
@@ -526,55 +516,27 @@ void key_thread(void){
                                      if(OPT_READ){
                                             if(flag_relay==1){
                                                  GPIO_WriteBit(OPT_PIN, 0);
-                                                 //if(flag_work_mode){
-                    				                switch_control =0;
-                    				                flash_t  flash;
-                                                    char data1[10]={'0'};
-                                                    flash_erase_sector(&flash,  ADDRESS_MEM);
-                                                    u8 return_value=flash_stream_write(&flash,  ADDRESS_MEM+500, 10,data1);
-                                                    char *argv2[] = { "conf", "save" };
-                                                    conf_cli(2, argv2);
-                                                    prop_send_by_name("Switch_Control");
-            				                        printf("\n\n----prop_send_by_name Switch_Control  0-------\n\n");
-            				                     //}
-                                             }else if(flag_relay==0){
+                                                 switch_control =0;
+                    				             prop_send_by_name("Switch_Control");
+            				                     printf("\n\n----prop_send_by_name Switch_Control  0-------\n\n");
+            				                   }else if(flag_relay==0){
                                                  GPIO_WriteBit(OPT_PIN, 0);
-                                                 //if(flag_work_mode){
-                    				                switch_control =1;
-                    				                flash_t  flash;
-                                                    char data1[10]={'1'};
-                                                    flash_erase_sector(&flash,  ADDRESS_MEM);
-                                                    u8 return_value=flash_stream_write(&flash,  ADDRESS_MEM, 10,data1);
-                                                    char *argv2[] = { "conf", "save" };
-                                                    conf_cli(2, argv2);
-            				                        prop_send_by_name("Switch_Control");
-            				                        printf("\n\n----prop_send_by_name Switch_Control  1-------\n\n");
-            				                     //}
-                                             }
+                                                 switch_control =1;
+                    				             prop_send_by_name("Switch_Control");
+            				                     printf("\n\n----prop_send_by_name Switch_Control  1-------\n\n");
+            				                }
                                      }else{
 				                         if(flag_relay==1){
                                                  GPIO_WriteBit(OPT_PIN, 1);
-                                                // if(flag_work_mode){
-                    				                switch_control =1;
-                    				                flash_t  flash;
-                                                    char data1[10]={'1'};
-                                                    flash_erase_sector(&flash,  ADDRESS_MEM);
-                                                    u8 return_value=flash_stream_write(&flash,  ADDRESS_MEM, 10,data1);
-            				                        prop_send_by_name("Switch_Control");
-            				                        printf("\n\n----prop_send_by_name Switch_Control  1-------\n\n");
-            				                     //}
-                                             }else if(flag_relay==0){
+                                                 switch_control =1;
+                    				             prop_send_by_name("Switch_Control");
+            				                     printf("\n\n----prop_send_by_name Switch_Control  1-------\n\n");
+            				                 }else if(flag_relay==0){
                                                  GPIO_WriteBit(OPT_PIN, 1);
-                                                 //if(flag_work_mode){
-                    				                switch_control =0;
-                    				                flash_t  flash;
-                                                    char data1[10]={'0'};
-                                                    flash_erase_sector(&flash,  ADDRESS_MEM);
-                                                    u8 return_value=flash_stream_write(&flash,  ADDRESS_MEM, 10,data1);
-            				                        prop_send_by_name("Switch_Control");
-            				                        printf("\n\n----prop_send_by_name Switch_Control  0-------\n\n");
-            				                     //}
-                                            }
+                                                 switch_control =0;
+                    				             prop_send_by_name("Switch_Control");
+            				                     printf("\n\n----prop_send_by_name Switch_Control  0-------\n\n");
+            				                }
 				                     } 
     				             }
     				             break;
@@ -795,37 +757,12 @@ static enum ada_err demo_led_set(struct ada_sprop *sprop,
 	    printf("\n\n-----switch_control_* is %d------\n\n",switch_control);
 	    //add by KingKa 2019.4.17
         if(switch_control==1){//开启
-            //断电记忆 写入flash中
-            flash_t  flash;
-            char data1[10]="987654321";
-            char data2[10];
-            flash_erase_sector(&flash,  ADDRESS_MEM);
-            u8 return_value=flash_stream_write(&flash,  ADDRESS_MEM, 10,data1);
-            char *argv2[] = { "conf", "save" };
-            conf_cli(2, argv2);
-            flash_stream_read(&flash,ADDRESS_MEM,10,data2);
-            for(int i=0;i<10;i++){
-                  printf("data2:%c\n",data2[i]); 
-            }
-        
             if(flag_relay==1){
                GPIO_WriteBit(OPT_PIN,1);
             }else if(flag_relay==0){
                GPIO_WriteBit(OPT_PIN,0);
             }
         }else if(switch_control==0){ //关闭
-           //断电记忆 写入flash中
-            flash_t  flash;
-            char data1[10]="123456789";
-            char data2[10];
-            flash_erase_sector(&flash,  ADDRESS_MEM);
-            u8 return_value=flash_stream_write(&flash,  ADDRESS_MEM, 10,data1);
-            char *argv2[] = { "conf", "save" };
-            conf_cli(2, argv2);
-            flash_stream_read(&flash,ADDRESS_MEM,10,data2);
-            for(int i=0;i<10;i++){
-                  printf("data2--:%c\n",data2[i]);
-            }
            if(flag_relay==1){
                GPIO_WriteBit(OPT_PIN,  0);
            }else if(flag_relay==0){

@@ -665,25 +665,25 @@ void ada_conf_file_cli(int argc, char **argv)
 	int len=strlen((char *)file->buf);
 	if(len>325){
                 //printf("\n\n\nfile_key:%s----len:%d----\n\n\n",(char *)file->buf,strlen((char *)file->buf));
-                if(*((char *)file->buf)=='s'){
+                if(*((char *)file->buf)=='s'){ //sa
                     /*if((PUBKEY_SET(((char *)file->buf)+2,REGION_SA,len))==0){
                           printf("\npara set ok\r\n");
                     }
                     memset((char *)file->buf,0,len);
                     return ;*/
-                }else if(*((char *)file->buf)=='u'){
+                }else if(*((char *)file->buf)=='u'){ //us
                     /*if((PUBKEY_SET(((char *)file->buf)+2,REGION_US,len))==0){
                           printf("\npara set ok\r\n");
                     }
                     memset((char *)file->buf,0,len);
                     return ;*/
-                }else if(*((char *)file->buf)=='e'){
+                }else if(*((char *)file->buf)=='e'){ //eu
                     /*if((PUBKEY_SET(((char *)file->buf)+2,REGION_EU,len))==0){
                           printf("\npara set ok\r\n");
                     }
                     memset((char *)file->buf,0,len);
                     return ;*/
-                }else if(*((char *)file->buf)=='*'){
+                }else if(*((char *)file->buf)=='*'){ //oem key
                     flash_t  flash;
 	                u8 return_value=flash_stream_write(&flash,  ADDRESS_OEMKEY, len-2, ((char *)file->buf)+2);
                     memset((char *)file->buf,0,len);
